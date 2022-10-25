@@ -46,11 +46,7 @@ terraform apply -auto-approve
 ```
 8. Once the terraform apply operation is complete, you will see a message similar to the one shown below.
 
-<<<<<<< HEAD:blueprints/distributed-architecture/single-az/README.md
 ![terraform apply output](/assets/distributed-1az-hcl-out.png)
-=======
-![terraform apply output](/assets/distributed-single-az-terraform-apply-output.png)
->>>>>>> 479cb1c (1. Added the Multi-AZ blueprint for Distributed Architecture.):blueprints/single-vpc-basic/README.md
 
 9. You can copy the value of __WEB_APP_SERVER_IP_ADDRESS__ and paste it on your browser. You should see the webpage as shown below.
 
