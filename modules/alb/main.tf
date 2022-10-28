@@ -95,3 +95,7 @@ resource "aws_autoscaling_attachment" "alb" {
   autoscaling_group_name  = aws_autoscaling_group.alb.id
   lb_target_group_arn     = aws_lb_target_group.alb.arn
 }
+
+output "LOAD_BALANCER_DNS_ADDRESS" {
+  value = aws_lb.alb.dns_name
+}

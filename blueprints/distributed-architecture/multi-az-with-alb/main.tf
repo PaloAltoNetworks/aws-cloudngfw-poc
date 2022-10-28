@@ -15,6 +15,7 @@ module "vpc" {
   security-groups  = var.vpc-security-groups
   nat-gateways     = var.nat-gateways
   global_tags      = var.global-tags
+  ec2-instances    = var.vpc-instances
 }
 
 module "vpc-routes" {
@@ -41,4 +42,8 @@ module "alb" {
   depends_on = [
     module.vpc-routes
   ]
+}
+
+output "LOAD_BALANCER_DNS_ADDRESS" {
+  value = module.alb.LOAD_BALANCER_DNS_ADDRESS
 }

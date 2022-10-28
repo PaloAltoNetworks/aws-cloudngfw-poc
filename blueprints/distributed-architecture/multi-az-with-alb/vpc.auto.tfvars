@@ -27,9 +27,12 @@ vpc = {
 vpc-route-tables = [
   { name = "rt-a", subnet = ["subnet-a"] },
   { name = "rt-b", subnet = ["subnet-b"] },
-  { name = "lb-rt", subnet = ["lb-subnet-a", "lb-subnet-b"] },
-  { name = "fw-rt-a", subnet = ["fw-subnet-a"] },
-  { name = "fw-rt-b", subnet = ["fw-subnet-b"] },
+  { name = "lb-rt-a", subnet = ["lb-subnet-a"] },
+  { name = "lb-rt-b", subnet = ["lb-subnet-b"] },
+  { name = "fw-ingress-rt-a", subnet = ["fw-ingress-subnet-a"] },
+  { name = "fw-ingress-rt-b", subnet = ["fw-ingress-subnet-b"] },
+  { name = "fw-egress-rt-a", subnet = ["fw-egress-subnet-a"] },
+  { name = "fw-egress-rt-b", subnet = ["fw-egress-subnet-b"] },
   { name = "natgw-rt-a", subnet = ["natgw-subnet-a"] },
   { name = "natgw-rt-b", subnet = ["natgw-subnet-b"] },
   { name = "igw-rt", edge = ["igw"] }
@@ -40,10 +43,12 @@ vpc-subnets = [
   { name = "subnet-b", cidr = "10.1.2.0/24", az = "b" },
   { name = "lb-subnet-a", cidr = "10.1.3.0/24", az = "a" },
   { name = "lb-subnet-b", cidr = "10.1.4.0/24", az = "b" },
-  { name = "fw-subnet-a", cidr = "10.1.5.0/24", az = "a" },
-  { name = "fw-subnet-b", cidr = "10.1.6.0/24", az = "b" },
-  { name = "natgw-subnet-a", cidr = "10.1.7.0/24", az = "a" },
-  { name = "natgw-subnet-b", cidr = "10.1.8.0/24", az = "b" }
+  { name = "fw-ingress-subnet-a", cidr = "10.1.5.0/24", az = "a" },
+  { name = "fw-ingress-subnet-b", cidr = "10.1.6.0/24", az = "b" },
+  { name = "fw-egress-subnet-a", cidr = "10.1.7.0/24", az = "a" },
+  { name = "fw-egress-subnet-b", cidr = "10.1.8.0/24", az = "b" },
+  { name = "natgw-subnet-a", cidr = "10.1.9.0/24", az = "a" },
+  { name = "natgw-subnet-b", cidr = "10.1.10.0/24", az = "b" }
 ]
 
 vpc-security-groups = [
@@ -133,12 +138,62 @@ vpc-routes = {
     next_hop_type = "internet_gateway"
     next_hop_name = "vpc"
   },
-  lb-igw = {
-    name          = "lb-igw"
+  lb-a-igw = {
+    name          = "lb-a-igw"
     vpc_name      = "vpc"
-    route_table   = "lb-rt"
+    route_table   = "lb-rt-a"
     prefix        = "0.0.0.0/0"
     next_hop_type = "internet_gateway"
     next_hop_name = "vpc"
+  },
+  lb-b-igw = {
+    name          = "lb-b-igw"
+    vpc_name      = "vpc"
+    route_table   = "lb-rt-b"
+    prefix        = "0.0.0.0/0"
+    next_hop_type = "internet_gateway"
+    next_hop_name = "vpc"
+  },
+  fw-a-igw = {
+    name          = "fw-a-igw"
+    vpc_name      = "vpc"
+    route_table   = "fw-ingress-rt-a"
+    prefix        = "0.0.0.0/0"
+    next_hop_type = "internet_gateway"
+    next_hop_name = "vpc"
+  },
+  fw-b-igw = {
+    name          = "fw-b-igw"
+    vpc_name      = "vpc"
+    route_table   = "fw-ingress-rt-b"
+    prefix        = "0.0.0.0/0"
+    next_hop_type = "internet_gateway"
+    next_hop_name = "vpc"
+  },
+  fw-a-natgw = {
+    name          = "fw-a-natgw"
+    vpc_name      = "vpc"
+    route_table   = "fw-egress-rt-a"
+    prefix        = "0.0.0.0/0"
+    next_hop_type = "nat_gateway"
+    next_hop_name = "natgw-a"
+  },
+  fw-b-natgw = {
+    name          = "fw-b-natgw"
+    vpc_name      = "vpc"
+    route_table   = "fw-egress-rt-b"
+    prefix        = "0.0.0.0/0"
+    next_hop_type = "nat_gateway"
+    next_hop_name = "natgw-b"
   }
 }
+
+vpc-instances = [
+  {
+    name           = "jump-host"
+    instance_type  = "t2.micro"
+    subnet         = "fw-ingress-subnet-a"
+    setup-file     = "ec2-startup-scripts/jump-host.sh"
+    security_group = "lb-sg"
+  }
+]

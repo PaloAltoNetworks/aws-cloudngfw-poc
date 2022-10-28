@@ -6,6 +6,8 @@ access-key      = ""
 secret-key      = ""
 region          = ""
 ssh-key-name    = ""
+
+# Pre-defined tags. You can choose to modify these if you want to.
 prefix-name-tag = "cloudngfw-"
 global-tags         = {
   managedBy   = "Terraform"

@@ -13,3 +13,4 @@ variable "instance-launch-config"   { default = {} }
 variable "prefix-name-tag"          { default = "" }
 variable "global-tags"              { default = {} }
 variable "nat-gateways"             { default = {} }
+variable "vpc-instances"            { default = [] }

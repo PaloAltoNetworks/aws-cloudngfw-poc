@@ -3,13 +3,7 @@ This blueprint is for a very basic PoC with a web server deployed in a single VP
 
 ## High-level topology
 
-### Inbound
-
-![high-level topo](/assets/distributed-1az-inb.png)
-
-### Outbound
-
-![high-level topo](/assets/distributed-1az-outb.png)
+![high-level topo](/assets/distributed-1az-arch.png)
 
 ## Deploying the AWS resources
 1. Make sure that you satisfy all the [prerequisites](https://github.com/PaloAltoNetworks/aws-cloudngfw-poc#prerequisites) for this blueprint deployment.
@@ -50,7 +44,7 @@ terraform apply -auto-approve
 
 9. You can copy the value of __WEB_APP_SERVER_IP_ADDRESS__ and paste it on your browser. You should see the webpage as shown below.
 
-![webpage screenshot](/assets/webpage-screenshot.png)
+![webpage screenshot](/assets/web-server-ip-screen.png)
 
 10. Now that our AWS Cloud resources have been deployed. It is time to configure and deploy the AWS CloudNGFW resources. Make sure that you have subscribed and onboarding your vendor account to the AWS CloudNGFW portal.
 11. Login to AWS CloudNGFW portal using the credentials used for the onboarding.
@@ -76,13 +70,22 @@ terraform apply -auto-approve
     - In the _Log Destination_ field, enter __PaloAltoCloudNGFW__.
     - Save.
 21. Navigate to the VPC section on the AWS Console and select Route Tables from the left-menu.
-22. In the _cloudngfw-vpc-rt_ route table, identify the route that has 0.0.0.0/0 as _Destination_ and change the _Target_ from the Internet Gateway to the Gateway Load Balancer Endpoint (GWLBE) created by the CloudNGFW service. The GWLBE should start with the "vpce" prefix.
-23. In the _cloudngfw-vpc-igw-rt_ route table, modify the existing route to change the _Target_ from _local_ to the GWLBE.
-24. In the _cloudngfw-vpc-fw-rt_ route table, add a new route with _Destination_ as 0.0.0.0/0 and the _Target_ as the Internet Gateway.
-25. Now, try to access the webpage as you did in Step 8. You should be able to see the same webpage as seen in Step 8. If the page does not load, review the changes in the route tables made in Steps 21, 22 and 23 once again and ensure they are as per instructions.
-26. If you are able to see the webpage, navigate to AWS Cloudwatch Log Groups and select __PaloAltoCloudNGFW__.
-27. You should be able to see new logs listed as the one shown below.
+22. Make the route changes as described in the table below.
+
+| Route Table            | Action       | Destination | Target           | Resource                                            |
+|------------------------|--------------|-------------|------------------|-----------------------------------------------------|
+| _cloudngfw-vpc-rt_     | Modify route | 0.0.0.0/0   | GWLB Endpoint    | GWLB Endpoint created in _cloudngfw-vpc-fw-subnet_  |
+| _cloudngfw-vpc-igw-rt_ | Modify route | 10.1.0.0/16 | GWLB Endpoint    | GWLB Endpoint created in  _cloudngfw-vpc-fw-subnet_ |
+| _cloudngfw-vpc-fw-rt_  | Modify route | 0.0.0.0/0   | Internet Gateway | Internet Gateway for the VPC.                       |
+
+23. Now, try to access the webpage as you did in Step 9. You should be able to see the same webpage as seen in Step 9. If the page does not load, review the changes in the route tables made in Steps 22 once again and ensure they are as per instructions.
+24. If you are able to see the webpage, navigate to AWS Cloudwatch Log Groups and select __PaloAltoCloudNGFW__.
+25. You should be able to see new logs listed as the one shown below.
 
 ![webpage screenshot](/assets/log-groups.png)
 
 ![webpage screenshot](/assets/logs.png)
+
+26. Once done, make sure to __Unsubscribe__ from the CloudNGFW service on the AWS Marketplace. This is important otherwise you will probably run into issues when you attempt to set it all up the next time.
+
+## Fin.
