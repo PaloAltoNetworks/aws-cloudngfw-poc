@@ -1,5 +1,3 @@
-# This README file is still Work In Progress
-# 
 # Distributed Architecture - Multi AZ Deployment
 This blueprint deploys the distributed design model of AWS CloudNGFW to secure Inbound and Outbound traffic for Web servers deployed in a Multi-AZ architecture behind an Application Load Balancer with Autoscaling.
 
