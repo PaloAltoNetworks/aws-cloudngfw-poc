@@ -45,7 +45,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "this" {
   subnet_ids = [ 
       for key, value in each.value.subnet_ids: 
       value
-      if length(regexall("tgw", key)) > 0
+      if length(regexall("-tgw", key)) > 0
     ]
   vpc_id                                          = each.value.id
   transit_gateway_id                              = aws_ec2_transit_gateway.this.id
